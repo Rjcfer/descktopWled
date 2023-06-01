@@ -143,17 +143,18 @@ function getTimeAndDate() {
         console.log(JSON.stringify(response));
         let date = new Date(response.datetime);
         data.seg[0].n =
-          date.getDay +
-          "/" +
-          date.getMonth +
-          "/" +
-          date.getDay +
-          "/" +
+          date.getDay() +
+          "-" +
+          date.getMonth() +
+          "-" +
+          date.getDay() +
+          "  " +
           date.getHours() +
-          ":" +
-          date.getMinutes();
+          "H" +
+          date.getMinutes() +
+          "m";
         postDataToWledAPI(data);
-        console.warn(date);
+        console.warn(data.seg[0].n);
       });
   } catch (error) {
     console.error("Error:", error);
