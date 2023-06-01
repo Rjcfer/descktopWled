@@ -2,17 +2,18 @@ $(function () {
   alert("jquery is loaded");
 });
 
-/*$(document).ready(function () {
+$(document).ready(function () {
   $("#countbtn").click(function () {
     $.ajax({
-      url: "http://localhost:3000/clicks",
-      type: "Post",
+      url: "http://api.meteo-concept.com/api/location/city?token=ad6fae89aeb81a84549f56a17667035c2060e05b9684ca5d3562cd4b8c259639&insee=51230",
+      type: "get",
       success: function (data) {
+        console.log(data);
         $("#click-counter").html(data.clicks);
       },
     });
   });
-});*/
+});
 
 $(() => {
   let count = 0;

@@ -8,6 +8,7 @@ const createWindow = () => {
 
   win.loadFile("index.html");
   win.webContents.openDevTools();
+  win.setIcon("assets/icons/icon.ico");
 };
 // creer une fenetre au demarrage de l'application lors que l'application est prete et la promesse est resolue
 app.whenReady().then(() => {
