@@ -1,8 +1,8 @@
 $(function () {
-  alert("jquery is loaded");
+  console.log("jquery is loaded");
 });
 
-$(document).ready(function () {
+/*$(document).ready(function () {
   $("#countbtn").click(function () {
     $.ajax({
       url:
@@ -17,6 +17,7 @@ $(document).ready(function () {
     });
   });
 });
+*/
 
 $(() => {
   let count = 0;
@@ -24,5 +25,6 @@ $(() => {
   $("#countbtn").on("click", () => {
     count++;
     $("#click-counter").text(count);
+    console.log(config.token_meteo);
   });
 });

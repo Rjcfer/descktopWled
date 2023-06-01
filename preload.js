@@ -5,5 +5,6 @@ contextBridge.exposeInMainWorld("versions", {
   chrome: () => process.versions.chrome,
   electron: () => process.versions.electron,
   ping: () => ipcRenderer.invoke("ping"),
+
   // nous pouvons aussi exposer des variables, pas seulement des fonctions
 });

@@ -1,11 +1,18 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
+const path = require("path");
+// require bootstrap and jquery from angular modules
+//require("bootstrap");
 
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+    },
   });
 
+  ipcMain.handle("ping", () => "pong");
   win.loadFile("index.html");
   win.webContents.openDevTools();
   win.setIcon("assets/icons/icon.ico");

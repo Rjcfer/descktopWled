@@ -6,6 +6,7 @@
   "scripts": {
     "start": "electron .",
     "test": "test",
+    "brow": "browserify main.js -o bundle.js",
     "build": "electron-packager . --overwrite --out=release-builds",
     "start-webpack": "npm run build-webpack && electron ./src/main.js",
     "build-webpack": "webpack --config ./webpack.config.js"
@@ -30,6 +31,10 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.0",
-    "jquery": "^3.7.0"
+    "browserify": "^17.0.0",
+    "jquery": "^3.7.0",
+    "jquery-browserify": "^1.8.1",
+    "jsdom": "^22.1.0",
+    "uniq": "^1.0.1"
   }
 }
