@@ -1,0 +1,23 @@
+{
+  "name": "descktopwled",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rjcfer/descktopWled.git"
+  },
+  "author": "Ricardo Ferreira",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Rjcfer/descktopWled/issues"
+  },
+  "homepage": "https://github.com/Rjcfer/descktopWled#readme",
+  "devDependencies": {
+    "electron": "^25.0.1"
+  }
+}
