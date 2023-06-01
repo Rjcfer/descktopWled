@@ -30,19 +30,20 @@ $(() => {
 });
 
 async function postData(data = {}) {
-  $.ajax({
-    type: "POST",
-    url: "192.168.1.42/json/state",
-    data: JSON.stringify({ Markers: markers }),
-    contentType: "application/json; charset=utf-8",
-    dataType: "json",
-    success: function (data) {
-      alert(data);
-    },
-    error: function (errMsg) {
-      alert(errMsg);
-    },
-  });
+  try {
+    fetch("http://192.168.1.42/json/state", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((response) => console.log(JSON.stringify(response)));
+  } catch (error) {
+    console.error("Error:", error);
+  }
 }
 
 let data = {
