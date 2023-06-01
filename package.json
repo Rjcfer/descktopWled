@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "electron ./src/main.js",
+    "start": "electron .",
     "test": "test",
     "build": "electron-packager . --overwrite --out=release-builds",
     "start-webpack": "npm run build-webpack && electron ./src/main.js",
