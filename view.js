@@ -129,19 +129,15 @@ function getMeteoData() {
   }
 }
 
-function getTimeAndData() {
+function getTimeAndDate() {
   try {
-    fetch(
-      "http://worldtimeapi.org/api/timezone/Europe/Paris",
-
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
+    fetch("http://worldtimeapi.org/api/timezone/Europe/Paris", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
       .then((promiseResponse) => promiseResponse.json())
       .then((response) => {
         console.log(JSON.stringify(response));
@@ -157,6 +153,7 @@ function getTimeAndData() {
           ":" +
           date.getMinutes();
         postDataToWledAPI(data);
+        console.warn(date);
       });
   } catch (error) {
     console.error("Error:", error);
@@ -169,7 +166,7 @@ var meteoTimer = setInterval(function () {
 }, 60 * 60 * 1000); //1 heure
 
 var timerID = setInterval(function () {
-  getTimeAndData();
+  getTimeAndDate();
 }, 60 * 1000); //1 minute
 
 /*$(() => {
@@ -203,7 +200,9 @@ async function postDataToWledAPI(data = {}) {
       body: JSON.stringify(data),
     })
       .then((response) => response.json())
-      .then((response) => console.log(JSON.stringify(response)));
+      .then((response) =>
+        console.info("wled is up and answer: " + JSON.stringify(response))
+      );
   } catch (error) {
     console.error("Error:", error);
   }
