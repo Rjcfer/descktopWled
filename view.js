@@ -1,51 +1,3 @@
-$(function () {
-  console.log("jquery is loaded");
-});
-
-/*$(document).ready(function () {
-  $("#countbtn").click(function () {
-    $.ajax({
-      url:
-        "http://api.meteo-concept.com/api/location/city?token=" +
-        config.token_meteo +
-        "&insee=51230",
-      type: "get",
-      success: function (data) {
-        console.log(data);
-        $("#click-counter").html(data.clicks);
-      },
-    });
-  });
-});
-*/
-
-$(() => {
-  let count = 0;
-  $("#click-counter").text(count.toString());
-  $("#countbtn").on("click", () => {
-    count++;
-    $("#click-counter").text(count);
-    postData(data);
-  });
-});
-
-async function postData(data = {}) {
-  try {
-    fetch("http://192.168.1.42/json/state", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((response) => console.log(JSON.stringify(response)));
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
-
 let data = {
   on: true,
   bri: 128,
@@ -137,3 +89,123 @@ let data = {
     },
   ],
 };
+
+let meteoData = {};
+
+$(function () {
+  console.log("ready!");
+  getMeteoData();
+});
+
+function getMeteoData() {
+  try {
+    fetch(
+      "http://api.meteo-concept.com/api/forecast/daily/3/period/2?token=" +
+        config.token_meteo +
+        "&insee=51230",
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((promiseResponse) => promiseResponse.json())
+      .then((response) => {
+        meteoData = response;
+        data.seg[0].n =
+          meteoData.forecast.temp2m.toString() +
+          "° C " +
+          "% pluie " +
+          meteoData.forecast.probarain +
+          "% " +
+          "meteo " +
+          meteoData.forecast.weather;
+        postDataToWledAPI(data);
+      });
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+function getTimeAndData() {
+  try {
+    fetch(
+      "http://http://worldtimeapi.org/api/timezone/Europe/Paris",
+
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((promiseResponse) => promiseResponse.json())
+      .then((response) => {
+        console.log(JSON.stringify(response));
+        let date = new Date(response.datetime);
+        data.seg[0].n =
+          date.getDay +
+          "/" +
+          date.getMonth +
+          "/" +
+          date.getDay +
+          "/" +
+          date.getHours() +
+          ":" +
+          date.getMinutes();
+        postDataToWledAPI(data);
+      });
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+//timers
+var meteoTimer = setInterval(function () {
+  getMeteoData();
+}, 60 * 60 * 1000); //1 heure
+
+var timerID = setInterval(function () {
+  getTimeAndData();
+}, 60 * 1000); //1 minute
+
+/*$(() => {
+  let count = 0;
+  $("#click-counter").text(count.toString());
+  $("#countbtn").on("click", () => {
+    count++;
+    $("#click-counter").text(count);
+    clearInterval(timerID);
+  });
+});*/
+
+$(() => {
+  let count = 0;
+  $("#click-counter").text(count.toString());
+  $("#countbtn").on("click", () => {
+    count++;
+    $("#click-counter").text(count);
+    clearInterval(timerID);
+  });
+});
+
+async function postDataToWledAPI(data = {}) {
+  console.log(JSON.stringify(data));
+  try {
+    fetch("http://192.168.1.42/json/state", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((response) => console.log(JSON.stringify(response)));
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
