@@ -132,7 +132,7 @@ function getMeteoData() {
 function getTimeAndData() {
   try {
     fetch(
-      "http://http://worldtimeapi.org/api/timezone/Europe/Paris",
+      "http://worldtimeapi.org/api/timezone/Europe/Paris",
 
       {
         method: "GET",
@@ -193,7 +193,6 @@ $(() => {
 });
 
 async function postDataToWledAPI(data = {}) {
-  console.log(JSON.stringify(data));
   try {
     fetch("http://192.168.1.42/json/state", {
       method: "POST",
