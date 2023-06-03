@@ -1,4 +1,4 @@
-let data = {
+let textData = {
   on: true,
   bri: 128,
   transition: 7,
@@ -90,14 +90,41 @@ let data = {
   ],
 };
 
+let playlistData = {
+  playlist: {
+    ps: [4, 10, 8, 5],
+    dur: [250, 250, 250, 250],
+    transition: 0,
+    repeat: 10,
+    end: 21,
+  },
+};
+
 let meteoData = {};
+let dateHourData = {};
+let isPostDatas = true;
 
 $(function () {
+  // init datas when dom ready
   console.log("ready!");
-  getMeteoData();
+  getMeteo();
+  sendDatasTimer();
+  $("#isPostDatas").text(isPostDatas.toString());
+
+  //logic
+  $("#postbtn").on("click", () => {
+    isPostDatas = !isPostDatas;
+    if (isPostDatas) sendDatasTimer();
+    $("#isPostDatas").text(isPostDatas.toString());
+  });
+
+  $("#sendText").on("click", () => {
+    let text = $("#textToSend").val();
+    postRandomText(text);
+  });
 });
 
-function getMeteoData() {
+function getMeteo() {
   try {
     fetch(
       "http://api.meteo-concept.com/api/forecast/daily/3/period/2?token=" +
@@ -113,23 +140,21 @@ function getMeteoData() {
     )
       .then((promiseResponse) => promiseResponse.json())
       .then((response) => {
-        meteoData = response;
-        data.seg[0].n =
-          meteoData.forecast.temp2m.toString() +
+        meteoData = textData;
+        meteoData.seg[0].n =
+          response.forecast.temp2m.toString() +
           "° C " +
           "% pluie " +
-          meteoData.forecast.probarain +
+          response.forecast.probarain +
           "% " +
           "meteo " +
-          meteoData.forecast.weather;
-        postDataToWledAPI(data);
+          response.forecast.weather;
       });
   } catch (error) {
     console.error("Error:", error);
   }
 }
-
-function getTimeAndDate() {
+function getPostTimeAndDate() {
   try {
     fetch("http://worldtimeapi.org/api/timezone/Europe/Paris", {
       method: "GET",
@@ -142,7 +167,8 @@ function getTimeAndDate() {
       .then((response) => {
         console.log(JSON.stringify(response));
         let date = new Date(response.datetime);
-        data.seg[0].n =
+        dateHourData = textData;
+        dateHourData.seg[0].n =
           date.getDay() +
           "-" +
           date.getMonth() +
@@ -153,42 +179,48 @@ function getTimeAndDate() {
           "H" +
           date.getMinutes() +
           "m";
-        postDataToWledAPI(data);
-        console.warn(data.seg[0].n);
+        postDataToWledAPI(textData);
+        console.warn(textData.seg[0].n);
       });
   } catch (error) {
     console.error("Error:", error);
   }
 }
 
-//timers
-var meteoTimer = setInterval(function () {
-  getMeteoData();
-}, 60 * 60 * 1000); //1 heure
+let index = 0;
 
-var timerID = setInterval(function () {
-  getTimeAndDate();
-}, 60 * 1000); //1 minute
+function sendDatasTimer() {
+  if (isPostDatas) {
+    console.log("timer");
+    setTimeout(function () {
+      if (index === 0) {
+        postDataToWledAPI(meteoData);
+      }
+      if (index === 1) {
+        postDataToWledAPI(playlistData);
+      }
+      if (index === 2) {
+        getPostTimeAndDate();
+        index = 0;
+        sendDatasTimer();
+      } else {
+        index++;
+        sendDatasTimer();
+      }
+    }, 1000 * 60);
+  }
+}
 
-/*$(() => {
-  let count = 0;
-  $("#click-counter").text(count.toString());
-  $("#countbtn").on("click", () => {
-    count++;
-    $("#click-counter").text(count);
-    clearInterval(timerID);
-  });
-});*/
-
-$(() => {
-  let count = 0;
-  $("#click-counter").text(count.toString());
-  $("#countbtn").on("click", () => {
-    count++;
-    $("#click-counter").text(count);
-    clearInterval(timerID);
-  });
-});
+function postRandomText(text) {
+  let randomTextData = textData;
+  randomTextData.seg[0].n = text;
+  postDataToWledAPI(randomTextData);
+  setTimeout(function () {
+    console.log("timer");
+    index = 0;
+    sendDatasTimer();
+  }, 100 * 60);
+}
 
 async function postDataToWledAPI(data = {}) {
   try {

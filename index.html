@@ -14,9 +14,25 @@
   <script src="./config.js"></script>
   <body>
     <div class="container">
-      <h1>This page is using Bootstrap and jQuery!</h1>
-      <h3 id="click-counter"></h3>
-      <button class="btn btn-success" id="countbtn">Click here</button>
+      <div class="row">
+        <div class="col">
+          <h1 class="h1">Controlleur Wled</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">Is posting datas: <span id="isPostDatas"></span></div>
+        <div class="col">
+          <button class="btn btn-success" id="postbtn">
+            Stop/start posting
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <input type="text" id="textToSend" />
+          <button class="btn btn-success" id="sendText">Send text</button>
+        </div>
+      </div>
     </div>
     <p id="info"></p>
   </body>
