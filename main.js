@@ -14,7 +14,7 @@ const createWindow = () => {
 
   ipcMain.handle("ping", () => "pong");
   win.loadFile("index.html");
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools(); uncomment to open dev tools
   win.setIcon("assets/icons/icon.ico");
 };
 // creer une fenetre au demarrage de l'application lors que l'application est prete et la promesse est resolue
