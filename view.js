@@ -103,13 +103,20 @@ let playlistData = {
 let meteoData = {};
 let dateHourData = {};
 let isPostDatas = true;
+let on = true;
 
 $(function () {
   // init datas when dom ready
   console.log("ready!");
   getMeteo();
+  postText("WLed");
+  setTimeout(function () {
+    postText("Bonjour Ricardo");
+  }, 100 * 60);
+
   sendDatasTimer();
   $("#isPostDatas").text(isPostDatas.toString());
+  $("#onOff").addClass("btn-success");
 
   //logic
   $("#postbtn").on("click", () => {
@@ -120,7 +127,20 @@ $(function () {
 
   $("#sendText").on("click", () => {
     let text = $("#textToSend").val();
-    postRandomText(text);
+    postText(text);
+  });
+
+  $("#onOff").on("click", () => {
+    on = !on;
+    if (on) {
+      $("#onOff").addClass("btn-success");
+      $("#onOff").removeClass("btn-danger");
+    } else {
+      $("#onOff").removeClass("btn-success");
+      $("#onOff").addClass("btn-danger");
+      isPostDatas = false;
+    }
+    postDataToWledAPI({ on: on });
   });
 });
 
@@ -207,11 +227,11 @@ function sendDatasTimer() {
         index++;
         sendDatasTimer();
       }
-    }, 1000 * 60);
+    }, 500 * 60);
   }
 }
 
-function postRandomText(text) {
+function postText(text) {
   let randomTextData = textData;
   randomTextData.seg[0].n = text;
   postDataToWledAPI(randomTextData);
