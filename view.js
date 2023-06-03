@@ -110,11 +110,16 @@ $(function () {
   console.log("ready!");
   getMeteo();
   postText("WLed");
+
   setTimeout(function () {
     postText("Bonjour Ricardo");
+    sendDatasTimer();
   }, 100 * 60);
 
-  sendDatasTimer();
+  setTimeout(function () {
+    getPostTimeAndDate();
+  }, 300 * 60);
+
   $("#isPostDatas").text(isPostDatas.toString());
   $("#onOff").addClass("btn-success");
 
@@ -128,6 +133,10 @@ $(function () {
   $("#sendText").on("click", () => {
     let text = $("#textToSend").val();
     postText(text);
+    setTimeout(function () {
+      index = 0;
+      sendDatasTimer();
+    }, 100 * 60);
   });
 
   $("#onOff").on("click", () => {
@@ -160,7 +169,7 @@ function getMeteo() {
     )
       .then((promiseResponse) => promiseResponse.json())
       .then((response) => {
-        meteoData = textData;
+        meteoData = JSON.parse(JSON.stringify(textData));
         meteoData.seg[0].n =
           response.forecast.temp2m.toString() +
           "° C " +
@@ -187,7 +196,7 @@ function getPostTimeAndDate() {
       .then((response) => {
         console.log(JSON.stringify(response));
         let date = new Date(response.datetime);
-        dateHourData = textData;
+        dateHourData = JSON.parse(JSON.stringify(textData));
         dateHourData.seg[0].n =
           date.getDay() +
           "-" +
@@ -199,8 +208,7 @@ function getPostTimeAndDate() {
           "H" +
           date.getMinutes() +
           "m";
-        postDataToWledAPI(textData);
-        console.warn(textData.seg[0].n);
+        postDataToWledAPI(dateHourData);
       });
   } catch (error) {
     console.error("Error:", error);
@@ -211,7 +219,6 @@ let index = 0;
 
 function sendDatasTimer() {
   if (isPostDatas) {
-    console.log("timer");
     setTimeout(function () {
       if (index === 0) {
         postDataToWledAPI(meteoData);
@@ -219,7 +226,7 @@ function sendDatasTimer() {
       if (index === 1) {
         postDataToWledAPI(playlistData);
       }
-      if (index === 2) {
+      if (index === 3) {
         getPostTimeAndDate();
         index = 0;
         sendDatasTimer();
@@ -227,19 +234,14 @@ function sendDatasTimer() {
         index++;
         sendDatasTimer();
       }
-    }, 500 * 60);
+    }, 1000 * 60);
   }
 }
 
 function postText(text) {
-  let randomTextData = textData;
+  let randomTextData = JSON.parse(JSON.stringify(textData));
   randomTextData.seg[0].n = text;
   postDataToWledAPI(randomTextData);
-  setTimeout(function () {
-    console.log("timer");
-    index = 0;
-    sendDatasTimer();
-  }, 100 * 60);
 }
 
 async function postDataToWledAPI(data = {}) {
@@ -251,11 +253,7 @@ async function postDataToWledAPI(data = {}) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((response) =>
-        console.info("wled is up and answer: " + JSON.stringify(response))
-      );
+    });
   } catch (error) {
     console.error("Error:", error);
   }
